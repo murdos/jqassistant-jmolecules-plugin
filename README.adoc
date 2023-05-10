@@ -9,34 +9,17 @@ in order to gain new insights, create additional concepts and constraints.
 
 Please check the documentation of the jMolecules project to see how architectural concepts can be marked in the source code.
 
-Afterwards, to have jQAssistant consider the annotations and to allow the execution of constraints, following dependency
-in the `jqassistant-maven-plugin` needs to be defined:
+Afterwards, to have jQAssistant consider the annotations and to allow the execution of constraints, the following plugin must be declared in th jQAssistant configuration:
 
-[source, xml]
+[source,yml]
+..jqassistant.yml
 ----
-<plugin>
-    <groupId>com.buschmais.jqassistant</groupId>
-    <artifactId>jqassistant-maven-plugin</artifactId>
-    <version>${jqassistant.version}</version>
-    <executions>
-        <execution>
-            <id>default-cli</id>
-            <goals>
-                <goal>scan</goal>
-                <goal>analyze</goal>
-            </goals>
-        </execution>
-    </executions>
-    <dependencies>
-        <dependency> // <1>
-            <groupId>org.jqassistant.plugin</groupId>
-            <artifactId>jqassistant-jmolecules-plugin</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-    </dependencies>
-</plugin>
+jqassistant:
+  plugins:
+    - group-id: org.jqassistant.plugin
+      artifact-id: jqassistant-jmolecules-plugin
+      version: 2.0.0
 ----
-<1> Definition of the plugin dependency
 
 == Mapping between jMolecules and jQAssistant
 
@@ -65,43 +48,26 @@ The `jqassistant-jmolecules-plugin` provides concepts to map the annotations and
 
 In order to make use of the provided concepts, the respective groups need to be added to the plugin configuration as following:
 
-[source, xml]
+[source,yml]
+..jqassistant.yml
 ----
-<plugin>
-    <groupId>com.buschmais.jqassistant</groupId>
-    <artifactId>jqassistant-maven-plugin</artifactId>
-    <version>${jqassistant.version}</version>
-    <executions>
-        <execution>
-            <id>default-cli</id>
-            <goals>
-                <goal>scan</goal>
-                <goal>analyze</goal>
-            </goals>
-            <configuration>
-                <groups> // <1>
-                    <group>jmolecules-cqrs:Default</group>
-                    <group>jmolecules-layered:Default</group>
-                    <group>jmolecules-layered:Strict</group>
-                    <group>jmolecules-onion-classical:Default</group>
-                    <group>jmolecules-onion-classical:Strict</group>
-                    <group>jmolecules-onion-simplified:Default</group>
-                    <group>jmolecules-onion-simplified:Strict</group>
-                    <group>jmolecules-ddd:Default</group>
-                    <group>jmolecules-ddd:Strict</group>
-                    <group>jmolecules-event:Default</group>
-                </groups>
-            </configuration>
-        </execution>
-    </executions>
-    <dependencies>
-        <dependency>
-            <groupId>org.jqassistant.plugin</groupId>
-            <artifactId>jqassistant-jmolecules-plugin</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-    </dependencies>
-</plugin>
+jqassistant:
+  plugins:
+    - group-id: org.jqassistant.plugin
+      artifact-id: jqassistant-jmolecules-plugin
+      version: 2.0.0
+  analyze:
+    groups: <1>
+      - jmolecules-cqrs:Default
+      - jmolecules-layered:Default
+      - jmolecules-layered:Strict
+      - jmolecules-onion-classical:Default
+      - jmolecules-onion-classical:Strict
+      - jmolecules-onion-simplified:Default
+      - jmolecules-onion-simplified:Strict
+      - jmolecules-ddd:Default
+      - jmolecules-ddd:Strict
+      - jmolecules-event:Default
 ----
 <1> Definition of the rules to be used
 
@@ -341,7 +307,7 @@ Constraint:
 == Visual Reporting
 
 === PlantUML-Reporting
-The jMolecules plug-in supports visualization of concepts using PlantUML in jQAssistant reports for the following concepts:
+The jMolecules plug-in supports visualization of concepts using the `jqassistant-plantuml-report-plugin` for the following concepts:
 
 * Bounded Context
 * Module
@@ -356,4 +322,4 @@ To use this functionality, define the jQAssistant concept with the following pro
 
 The jMolecules plug-in works well with the `jqassistant-context-mapper-plugin` to visualize Bounded Contexts identified via jMolecules as a context map.
 
-For further details, see the https://github.com/jqassistant-contrib/jqassistant-context-mapper-plugin[project page].
+For further details, see the https://github.com/jqassistant-plugin/jqassistant-context-mapper-plugin[project page].
