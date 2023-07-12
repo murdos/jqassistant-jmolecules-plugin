@@ -4,7 +4,7 @@ import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import org.jqassistant.plugin.jmolecules.set.cqrs.current.QueryModel1;
+import org.jqassistant.plugin.jmolecules.set.cqrs.deprecated.QueryModel1;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class QueryModelIT extends AbstractJavaPluginIT {
+public class QueryModelDeprecatedIT extends AbstractJavaPluginIT {
 
     @Test
     public void queryModel() throws RuleException {

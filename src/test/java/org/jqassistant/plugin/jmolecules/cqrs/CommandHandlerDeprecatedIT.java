@@ -4,7 +4,7 @@ import com.buschmais.jqassistant.core.report.api.model.Result;
 import com.buschmais.jqassistant.core.rule.api.model.RuleException;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import org.jqassistant.plugin.jmolecules.AbstractJMoleculesPluginIT;
-import org.jqassistant.plugin.jmolecules.set.cqrs.current.Command1;
+import org.jqassistant.plugin.jmolecules.set.cqrs.deprecated.Command1;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CommandHandlerIT extends AbstractJMoleculesPluginIT {
+public class CommandHandlerDeprecatedIT extends AbstractJMoleculesPluginIT {
 
     @Test
     public void commandHandler() throws RuleException {

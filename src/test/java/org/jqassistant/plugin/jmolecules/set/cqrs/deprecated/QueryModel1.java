@@ -1,4 +1,4 @@
-package org.jqassistant.plugin.jmolecules.set.cqrs;
+package org.jqassistant.plugin.jmolecules.set.cqrs.deprecated;
 
 import org.jmolecules.architecture.cqrs.annotation.QueryModel;
 
