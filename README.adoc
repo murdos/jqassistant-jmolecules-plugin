@@ -18,7 +18,7 @@ jqassistant:
   plugins:
     - group-id: org.jqassistant.plugin
       artifact-id: jqassistant-jmolecules-plugin
-      version: 2.0.0
+      version: 2.1.0
 ----
 
 == Mapping between jMolecules and jQAssistant
@@ -57,7 +57,7 @@ jqassistant:
   plugins:
     - group-id: org.jqassistant.plugin
       artifact-id: jqassistant-jmolecules-plugin
-      version: 2.0.0
+      version: 2.1.0
   analyze:
     groups: <1>
       - jmolecules-cqrs:Default
