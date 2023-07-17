@@ -1,6 +1,6 @@
 <jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10">
 
-    <group id="jmolecules-hexaonal:Strict">
+    <group id="jmolecules-hexagonal:Strict">
         <includeConstraint refId="jmolecules-hexagonal:TypeAssignedToMultipleHexagonalAspects"/>
         <includeConstraint refId="jmolecules-hexagonal:PortMustBePartOfApplicationCore"/>
         <includeConstraint refId="jmolecules-hexagonal:AdapterMustNotBePartOfApplicationCore"/>
@@ -16,7 +16,7 @@
 
     <constraint id="jmolecules-hexagonal:TypeAssignedToMultipleHexagonalAspects">
         <requiresConcept refId="jmolecules-hexagonal:Adapter"/>
-        <requiresConcept refId="jmolecules-hexagonal:Port"/>
+        <requiresConcept refId="jmolecules-hexagonal:Port"/>        
         <description>Ensures that each type is assigned to either port or an adapter.</description>
         <cypher><![CDATA[
           MATCH
@@ -68,13 +68,15 @@
         <description>Ensures dependencies to primary (and unqualified) ports are only introduced by primary/unqualified adapters.</description>
         <cypher><![CDATA[
           MATCH
-            (port:JMolecules:Architecture:Hexagonal:Port)-[:IMPLEMENTED_BY]->(portType:Type)<-[:DEPENDS_ON]-(dep:Type)
+            (port:JMolecules:Architecture:Hexagonal:Port)-[:IMPLEMENTED_BY]->(portType:Type)<-[:DEPENDS_ON]-(dep:Type),
+            (a:Artifact)-[:CONTAINS]->(dep)
           WHERE
             port.type IN ["Primary", "Unqualified"] AND
             NOT (:JMolecules:Architecture:Hexagonal:Adapter{type: "Unqualified"})-[:IMPLEMENTED_BY]->(dep) AND
             NOT (:JMolecules:Architecture:Hexagonal:Adapter{type: "Primary"})-[:IMPLEMENTED_BY]->(dep) AND
             NOT (:JMolecules:Architecture:Hexagonal:Port{type: "Unqualified"})-[:IMPLEMENTED_BY]->(dep) AND
-            NOT (:JMolecules:Architecture:Hexagonal:Port{type: "Primary"})-[:IMPLEMENTED_BY]->(dep)
+            NOT (:JMolecules:Architecture:Hexagonal:Port{type: "Primary"})-[:IMPLEMENTED_BY]->(dep) AND
+            NOT a:Test
           RETURN
             dep AS IllegalDependent, portType AS Port
         ]]></cypher>
@@ -87,14 +89,16 @@
         <description>Ensures dependencies to secondary (and unqualified) ports are only introduced by the application core and secondary/unqualified adapters.</description>
         <cypher><![CDATA[
           MATCH
-            (port:JMolecules:Architecture:Hexagonal:Port)-[:IMPLEMENTED_BY]->(portType:Type)<-[:DEPENDS_ON]-(dep:Type)
+            (port:JMolecules:Architecture:Hexagonal:Port)-[:IMPLEMENTED_BY]->(portType:Type)<-[:DEPENDS_ON]-(dep:Type),
+            (a:Artifact)-[:CONTAINS]->(dep)
           WHERE
             port.type IN ["Secondary", "Unqualified"] AND
             NOT (:JMolecules:Architecture:Hexagonal:Adapter{type: "Unqualified"})-[:IMPLEMENTED_BY]->(dep) AND // explicit allowance for unqualified adapters
             NOT (:JMolecules:Architecture:Hexagonal:Adapter{type: "Secondary"})-[:IMPLEMENTED_BY]->(dep) AND
             NOT (:JMolecules:Architecture:Hexagonal:ApplicationCore)-[:CONTAINS]->(dep) AND
             NOT (:JMolecules:Architecture:Hexagonal:Port{type: "Unqualified"})-[:IMPLEMENTED_BY]->(dep) AND
-            NOT (:JMolecules:Architecture:Hexagonal:Port{type: "Secondary"})-[:IMPLEMENTED_BY]->(dep)
+            NOT (:JMolecules:Architecture:Hexagonal:Port{type: "Secondary"})-[:IMPLEMENTED_BY]->(dep) AND
+            NOT a:Test
           RETURN
             dep AS IllegalDependent, portType AS Port
         ]]></cypher>
@@ -105,11 +109,13 @@
         <description>Ensures that adapters are only accessed from itself and adapters of the same type. </description>
         <cypher><![CDATA[
           MATCH
-            (adapter:JMolecules:Architecture:Hexagonal:Adapter)-[:IMPLEMENTED_BY]->(adapterType:Type)<-[:DEPENDS_ON]-(dep:Type)
+            (adapter:JMolecules:Architecture:Hexagonal:Adapter)-[:IMPLEMENTED_BY]->(adapterType:Type)<-[:DEPENDS_ON]-(dep:Type),
+            (a:Artifact)-[:CONTAINS]->(dep)
           WHERE
             NOT (:JMolecules:Architecture:Hexagonal:Adapter{type: adapter.type})-[:IMPLEMENTED_BY]->(dep) AND
             NOT (:JMolecules:Architecture:Hexagonal:Adapter{type: "Unqualified"})-[:IMPLEMENTED_BY]->(dep) AND
-            NOT (adapter.type = "Unqualified" AND (:JMolecules:Architecture:Hexagonal:Adapter)-[:IMPLEMENTED_BY]->(dep))
+            NOT (adapter.type = "Unqualified" AND (:JMolecules:Architecture:Hexagonal:Adapter)-[:IMPLEMENTED_BY]->(dep)) AND
+            NOT a:Test
           RETURN
             dep AS IllegalDependent, adapterType AS Adapter
         ]]></cypher>
@@ -120,9 +126,11 @@
         <description>Ensures that adapters are only accessed from itself. </description>
         <cypher><![CDATA[
           MATCH
-            (adapter:JMolecules:Architecture:Hexagonal:Adapter)-[:IMPLEMENTED_BY]->(adapterType:Type)<-[:DEPENDS_ON]-(dep:Type)
+            (adapter:JMolecules:Architecture:Hexagonal:Adapter)-[:IMPLEMENTED_BY]->(adapterType:Type)<-[:DEPENDS_ON]-(dep:Type),
+            (a:Artifact)-[:CONTAINS]->(dep)
           WHERE
-            NOT (adapter)-[:IMPLEMENTED_BY]->(dep)
+            NOT (adapter)-[:IMPLEMENTED_BY]->(dep) AND 
+            NOT a:Test 
           RETURN
             dep AS IllegalDependent, adapterType AS Adapter
         ]]></cypher>

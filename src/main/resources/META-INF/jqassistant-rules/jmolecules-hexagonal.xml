@@ -1,6 +1,6 @@
 <jqassistant-rules xmlns="http://schema.jqassistant.org/rule/v1.10">
 
-    <group id="jmolecules-hexaonal:Default">
+    <group id="jmolecules-hexagonal:Default">
         <includeConcept refId="jmolecules-hexagonal:ApplicationCoreType" severity="info"/>
         <includeConcept refId="jmolecules-hexagonal:ApplicationCorePackage" severity="info"/>
 
