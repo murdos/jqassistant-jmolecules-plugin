@@ -34,6 +34,8 @@ The `jqassistant-jmolecules-plugin` provides concepts to map the annotations and
 |====================
 | jMolecules                                 | jQAssistant
 | jmolecules-cqrs-architecute                | jmolecules-cqrs:Default
+| jmolecules-hexagonal-architecture          | jmolecules-hexagonal:Default
+|                                            | jmolecules-hexagonal:Strict
 | jmolecules-layered-architecture            | jmolecules-layered:Default
 |                                            | jmolecules-layered:Strict
 | jmolecules-onion-architecture (Classical)  | jmolecules-onion-classical:Default
@@ -59,6 +61,8 @@ jqassistant:
   analyze:
     groups: <1>
       - jmolecules-cqrs:Default
+      - jmolecules-hexagonal:Default
+      - jmolecules-hexagonal:Strict
       - jmolecules-layered:Default
       - jmolecules-layered:Strict
       - jmolecules-onion-classical:Default
@@ -70,6 +74,61 @@ jqassistant:
       - jmolecules-event:Default
 ----
 <1> Definition of the rules to be used
+
+== Concepts and Constraints for the Hexagonal Architecture
+* The concepts mentioned in this section are used for `jmolecules-architecture-hexagonal`
+* The concepts mentioned in this section are part of `jmolecules-hexagonal:Default` or `jmolecules-hexagonal:Strict`
+* `jmolecules-hexagonal:Strict` contains `jmolecules-hexagonal:Default`
+* For each Port or Adapter, each qualified by type (Primary/Secondary/Unqualified) and name (defaults to Type or Package name, depending on the annotation used), as well as for the Application Core, a node will be created. Types will be assigned to the node via a `:IMPLEMENTED_BY` (Port/Adapter) or `:CONTAINS` (Application Core) relation
+* Dependencies between types will be aggreagted to the level of hexagonal aspects
+
+Supported Annotations and Types:
+
+* Adapter|PrimaryAdapter|SecondaryAdapter
+** Supported as Package- and Type-Annotation
+** Applied Labels: `:JMolecules:Architecture:Hexagonal:Adapter`
+** The type of the adapter (Primary,Secondary,Unqualified) will be set as property to the node
+** The property `name` is suported, it'll be set as property on the created node
+** Default values for `name`: Simple type name of the annotated class or simple name of the annotated package, respectively
+** Types will be assigned to the created nodes via a `(:Adapter)-[:IMPLEMENTED_BY]->(:Type)` relation
+
+* Port|PrimaryPort|SecondaryPort
+** Supported as Package- and Type-Annotation
+** Applied Labels: `:JMolecules:Architecture:Hexagonal:Port`
+** The type of the port (Primary,Secondary,Unqualified) will be set as property to the node
+** The property `name` is suported, it'll be set as property on the created node
+** Default values for `name`: Simple type name of the annotated class or simple name of the annotated package, respectively
+** Types will be assigned to the created nodes via a `(:Port)-[:IMPLEMENTED_BY]->(:Type)` relation
+
+* Application
+** Supported as Package- and Type-Annotation
+** Applied labels: `:JMolecules:Architecture:Hexgonal:ApplicationCore`
+** Types will be assigned to the created node via a `(:ApplicationCore)-[:CONTAINS]->(:Type)` relation
+
+Additionally, the dependencies between types will be aggregated to the level of hexagonal aspects including a weight, giving how many dependencies between aspects exist.
+
+Additionally, ports will be assigned to the application core via a `(:ApplicationCore)-[:HAS_PORT]->(:Port)` relation.
+
+Constraint:
+
+* jmolecules-hexagonal:TypeAssignedToMultipleHexagonalAspects (strict-group)
+** Checks that each type is part of only one port or adapter
+* jmolecules-hexagonal:PortMustBePartOfApplicationCore (strict-group)
+** Checks that ports are located inside the application core
+* jmolecules-hexagonal:AdapterMustNotBePartOfApplicationCore (strict-group)
+** Checks that adapters are located outside the application core
+* jmolecules-hexagonal:IllegalAccessToPrimaryPort (strict-group)
+** Checks that primary/unqualified ports are only accessed by primary/unqualified adapters and ports
+* jmolecules-hexagonal:IllegalAccessToSecondaryPort (strict-group)
+** Checks that secondary/unqualified ports are only accessed by the application core and secondary/unqualified adapters and ports
+* jmolecules-hexagonal:AdapterMustOnlyBeAccessedBySameAdapterType (strict-group)
+** Checks that adapters are only accessed by the adapters of the same type, or, in case of an unqualified adapter, any adapter type
+* jmolecules-hexagonal:AdapterMustOnlyBeAccessedBySameAdapter (strict-group)
+** Checks that adapters are only accessed by the adapters of the same type and name
+* jmolecules-hexagonal:ApplicationCoreMustOnlyDependOnItself (strict-group)
+** Checks that the application core only depends on itself, excluding library types
+* jmolecules-hexagonal:UseOfUnqualifiedAdapterOrPort (strict-group)
+** Checks that the type ports and adapters is always qualified, so the PrimaryAdapter/SecondaryAdapter or PrimaryPort/SecondaryPort annotations are used
 
 == Concepts and Constraints for the Layered Architecture
 * The concepts mentioned in this section are used for `jmolecules-architecture-layered`
