@@ -87,7 +87,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (type:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotation:Type)
+              (type:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
             WHERE
               NOT type.sourceFileName = "package-info.java" AND // Need to exclude package-info to avoid defaulting the port name to package-info. Annotated package-info will be evaluated in PortPackage concept.
               annotation.fqn IN [
@@ -161,7 +161,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (type:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(annotation:Type)
+              (type:Type)-[:ANNOTATED_BY]->(a)-[:OF_TYPE]->(annotation:Type)
             WHERE
               NOT type.sourceFileName = "package-info.java" AND // Need to exclude package-info to avoid defaulting the adapter name to package-info. Annotated package-info will be evaluated in AdapterPackage concept.
               annotation.fqn IN [
