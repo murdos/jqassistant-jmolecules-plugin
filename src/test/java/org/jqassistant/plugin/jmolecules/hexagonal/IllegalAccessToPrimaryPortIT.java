@@ -25,10 +25,9 @@ public class IllegalAccessToPrimaryPortIT extends AbstractJMoleculesPluginIT {
         Result<Constraint> constraintResult = validateConstraint("jmolecules-hexagonal:IllegalAccessToPrimaryPort");
         assertThat(constraintResult.getStatus()).isEqualTo(Result.Status.FAILURE);
         store.beginTransaction();
-        assertThat(constraintResult.getRows().size()).isEqualTo(4);
+        assertThat(constraintResult.getRows().size()).isEqualTo(3);
         List<TypeDescriptor> types = constraintResult.getRows().stream().map(Row::getColumns).map(r -> (TypeDescriptor) r.get("IllegalDependent").getValue()).collect(Collectors.toList());
         assertThat(types).is(matching(containsInAnyOrder(
-                typeDescriptor(ApplicationCoreType.class),
                 typeDescriptor(SecondaryAdapter.class),
                 typeDescriptor(SecondaryPort.class),
                 typeDescriptor(UnknownType.class))));

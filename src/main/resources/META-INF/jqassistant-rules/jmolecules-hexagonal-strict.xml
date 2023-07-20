@@ -64,6 +64,7 @@
 
     <constraint id="jmolecules-hexagonal:IllegalAccessToPrimaryPort">
         <requiresConcept refId="jmolecules-hexagonal:Adapter"/>
+        <requiresConcept refId="jmolecules-hexagonal:ApplicationCore"/>
         <requiresConcept refId="jmolecules-hexagonal:Port"/>
         <description>Ensures dependencies to primary (and unqualified) ports are only introduced by primary/unqualified adapters.</description>
         <cypher><![CDATA[
@@ -74,6 +75,7 @@
             port.type IN ["Primary", "Unqualified"] AND
             NOT (:JMolecules:Architecture:Hexagonal:Adapter{type: "Unqualified"})-[:IMPLEMENTED_BY]->(dep) AND
             NOT (:JMolecules:Architecture:Hexagonal:Adapter{type: "Primary"})-[:IMPLEMENTED_BY]->(dep) AND
+            NOT (:JMolecules:Architecture:Hexagonal:ApplicationCore)-[:CONTAINS]->(dep) AND
             NOT (:JMolecules:Architecture:Hexagonal:Port{type: "Unqualified"})-[:IMPLEMENTED_BY]->(dep) AND
             NOT (:JMolecules:Architecture:Hexagonal:Port{type: "Primary"})-[:IMPLEMENTED_BY]->(dep) AND
             NOT a:Test

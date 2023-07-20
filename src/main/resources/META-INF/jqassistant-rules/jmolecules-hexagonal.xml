@@ -15,6 +15,7 @@
     </group>
 
     <concept id="jmolecules-hexagonal:ApplicationCore">
+        <description>Identifies all types that are pat of the application core.</description>
         <cypher><![CDATA[
           MATCH
             (a:JMolecules:Architecture:Hexagonal:ApplicationCore)-[:CONTAINS]->(t:Type)
@@ -69,6 +70,7 @@
     </concept>
 
     <concept id="jmolecules-hexagonal:Port">
+        <description>Identifies all port types.</description>
         <cypher><![CDATA[
           MATCH
             (p:JMolecules:Architecture:Hexagonal:Port)-[:IMPLEMENTED_BY]->(t:Type)
@@ -143,6 +145,7 @@
     </concept>
 
     <concept id="jmolecules-hexagonal:Adapter">
+        <description>Identifies all adapter types.</description>
         <cypher><![CDATA[
           MATCH
             (a:JMolecules:Architecture:Hexagonal:Adapter)-[:IMPLEMENTED_BY]->(t:Type)
