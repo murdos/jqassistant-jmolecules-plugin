@@ -85,6 +85,10 @@
         </dependency>
         <dependency>
             <groupId>org.jmolecules</groupId>
+            <artifactId>jmolecules-hexagonal-architecture</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jmolecules</groupId>
             <artifactId>jmolecules-events</artifactId>
         </dependency>
         <!-- Test dependencies -->
@@ -159,6 +163,12 @@
             <dependency>
                 <groupId>org.jmolecules</groupId>
                 <artifactId>jmolecules-onion-architecture</artifactId>
+                <version>${jmolecules.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jmolecules</groupId>
+                <artifactId>jmolecules-hexagonal-architecture</artifactId>
                 <version>${jmolecules.version}</version>
                 <scope>test</scope>
             </dependency>

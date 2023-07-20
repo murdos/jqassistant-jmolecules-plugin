@@ -16,6 +16,8 @@
         <resource>jmolecules-ddd.xml</resource>
         <resource>jmolecules-ddd-strict.xml</resource>
         <resource>jmolecules-event.xml</resource>
+        <resource>jmolecules-hexagonal.xml</resource>
+        <resource>jmolecules-hexagonal-strict.xml</resource>
         <resource>jmolecules-layered.xml</resource>
         <resource>jmolecules-layered-strict.xml</resource>
         <resource>jmolecules-onion-simplified.xml</resource>
