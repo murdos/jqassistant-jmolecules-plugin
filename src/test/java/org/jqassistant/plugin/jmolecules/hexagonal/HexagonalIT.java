@@ -31,17 +31,21 @@ public class HexagonalIT extends AbstractJMoleculesPluginIT {
         assertThat(applyConcept("jmolecules-hexagonal:ApplicationCorePackage").getStatus()).isEqualTo(Result.Status.SUCCESS);
         store.beginTransaction();
         List<TypeDescriptor> types = query("MATCH (:JMolecules:Architecture:Hexagonal:ApplicationCore)-[:CONTAINS]->(t:Type) RETURN t ORDER BY toLower(t.name)").getColumn("t");
-        assertThat(types.size()).isEqualTo(10);
-        assertThat(types.get(0).getName()).isEqualTo("package-info");
-        assertThat(types.get(1).getName()).isEqualTo("package-info");
-        assertThat(types.get(2).getName()).isEqualTo("package-info");
-        assertThat(types.get(3).getName()).isEqualTo("package-info");
-        assertThat(types.get(4).getName()).isEqualTo("PortPackage");
-        assertThat(types.get(5).getName()).isEqualTo("PortType");
-        assertThat(types.get(6).getName()).isEqualTo("PrimaryPortPackage");
-        assertThat(types.get(7).getName()).isEqualTo("PrimaryPortType");
-        assertThat(types.get(8).getName()).isEqualTo("SecondaryPortPackage");
-        assertThat(types.get(9).getName()).isEqualTo("SecondaryPortType");
+        assertThat(types.size()).isEqualTo(14);
+        assertThat(types.get(0).getName()).isEqualTo("NamedPort");
+        assertThat(types.get(1).getName()).isEqualTo("NamedPrimaryPort");
+        assertThat(types.get(2).getName()).isEqualTo("NamedPrimaryPortDTO");
+        assertThat(types.get(3).getName()).isEqualTo("NamedSecondaryPort");
+        assertThat(types.get(4).getName()).isEqualTo("package-info");
+        assertThat(types.get(5).getName()).isEqualTo("package-info");
+        assertThat(types.get(6).getName()).isEqualTo("package-info");
+        assertThat(types.get(7).getName()).isEqualTo("package-info");
+        assertThat(types.get(8).getName()).isEqualTo("PortPackage");
+        assertThat(types.get(9).getName()).isEqualTo("PortType");
+        assertThat(types.get(10).getName()).isEqualTo("PrimaryPortPackage");
+        assertThat(types.get(11).getName()).isEqualTo("PrimaryPortType");
+        assertThat(types.get(12).getName()).isEqualTo("SecondaryPortPackage");
+        assertThat(types.get(13).getName()).isEqualTo("SecondaryPortType");
         store.commitTransaction();
     }
 
@@ -50,20 +54,35 @@ public class HexagonalIT extends AbstractJMoleculesPluginIT {
         scanClassesAndPackages(HexagonalApp.class);
         assertThat(applyConcept("jmolecules-hexagonal:PortType").getStatus()).isEqualTo(Result.Status.SUCCESS);
         store.beginTransaction();
-        TestResult unqualifiedTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Unqualified'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port ORDER BY toLower(t.name)");
-        assertThat(unqualifiedTypes.getRows().size()).isEqualTo(1);
-        assertThat(unqualifiedTypes.getRows().get(0).get("type")).isEqualTo("PortType");
-        assertThat(unqualifiedTypes.getRows().get(0).get("port")).isEqualTo("PortType");
+        TestResult unqualifiedTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Unqualified'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port, p.description AS description ORDER BY toLower(t.name)");
+        assertThat(unqualifiedTypes.getRows().size()).isEqualTo(2);
+        assertThat(unqualifiedTypes.getRows().get(0).get("type")).isEqualTo("NamedPort");
+        assertThat(unqualifiedTypes.getRows().get(0).get("port")).isEqualTo("CustomNamedPort");
+        assertThat(unqualifiedTypes.getRows().get(0).get("description")).isEqualTo(null);
+        assertThat(unqualifiedTypes.getRows().get(1).get("type")).isEqualTo("PortType");
+        assertThat(unqualifiedTypes.getRows().get(1).get("port")).isEqualTo("PortType");
+        assertThat(unqualifiedTypes.getRows().get(1).get("description")).isEqualTo(null);
 
-        TestResult primaryTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Primary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port ORDER BY toLower(t.name)");
-        assertThat(primaryTypes.getRows().size()).isEqualTo(1);
-        assertThat(primaryTypes.getRows().get(0).get("type")).isEqualTo("PrimaryPortType");
-        assertThat(primaryTypes.getRows().get(0).get("port")).isEqualTo("PrimaryPortType");
+        TestResult primaryTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Primary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port, p.description AS description ORDER BY toLower(t.name)");
+        assertThat(primaryTypes.getRows().size()).isEqualTo(3);
+        assertThat(primaryTypes.getRows().get(0).get("type")).isEqualTo("NamedPrimaryPort");
+        assertThat(primaryTypes.getRows().get(0).get("port")).isEqualTo("CustomNamedPrimaryPort");
+        assertThat(primaryTypes.getRows().get(0).get("description")).isEqualTo("Some Primary Port Description");
+        assertThat(primaryTypes.getRows().get(1).get("type")).isEqualTo("NamedPrimaryPortDTO");
+        assertThat(primaryTypes.getRows().get(1).get("port")).isEqualTo("CustomNamedPrimaryPort");
+        assertThat(primaryTypes.getRows().get(1).get("description")).isEqualTo("Some Primary Port Description");
+        assertThat(primaryTypes.getRows().get(2).get("type")).isEqualTo("PrimaryPortType");
+        assertThat(primaryTypes.getRows().get(2).get("port")).isEqualTo("PrimaryPortType");
+        assertThat(primaryTypes.getRows().get(2).get("description")).isEqualTo(null);
 
-        TestResult secondaryTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Secondary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port ORDER BY toLower(t.name)");
-        assertThat(secondaryTypes.getRows().size()).isEqualTo(1);
-        assertThat(secondaryTypes.getRows().get(0).get("type")).isEqualTo("SecondaryPortType");
-        assertThat(secondaryTypes.getRows().get(0).get("port")).isEqualTo("SecondaryPortType");
+        TestResult secondaryTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Secondary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port, p.description AS description ORDER BY toLower(t.name)");
+        assertThat(secondaryTypes.getRows().size()).isEqualTo(2);
+        assertThat(secondaryTypes.getRows().get(0).get("type")).isEqualTo("NamedSecondaryPort");
+        assertThat(secondaryTypes.getRows().get(0).get("port")).isEqualTo("CustomNamedSecondaryPort");
+        assertThat(secondaryTypes.getRows().get(0).get("description")).isEqualTo(null);
+        assertThat(secondaryTypes.getRows().get(1).get("type")).isEqualTo("SecondaryPortType");
+        assertThat(secondaryTypes.getRows().get(1).get("port")).isEqualTo("SecondaryPortType");
+        assertThat(secondaryTypes.getRows().get(1).get("description")).isEqualTo(null);
         store.commitTransaction();
     }
 
@@ -72,26 +91,32 @@ public class HexagonalIT extends AbstractJMoleculesPluginIT {
         scanClassesAndPackages(HexagonalApp.class);
         assertThat(applyConcept("jmolecules-hexagonal:PortPackage").getStatus()).isEqualTo(Result.Status.SUCCESS);
         store.beginTransaction();
-        TestResult unqualifiedTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Unqualified'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port ORDER BY toLower(t.name)");
+        TestResult unqualifiedTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Unqualified'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port, p.description AS description ORDER BY toLower(t.name)");
         assertThat(unqualifiedTypes.getRows().size()).isEqualTo(2);
         assertThat(unqualifiedTypes.getRows().get(0).get("type")).isEqualTo("package-info");
-        assertThat(unqualifiedTypes.getRows().get(0).get("port")).isEqualTo("port");
+        assertThat(unqualifiedTypes.getRows().get(0).get("port")).isEqualTo("NamedPortPackage");
+        assertThat(unqualifiedTypes.getRows().get(0).get("description")).isEqualTo("Some Port Description");
         assertThat(unqualifiedTypes.getRows().get(1).get("type")).isEqualTo("PortPackage");
-        assertThat(unqualifiedTypes.getRows().get(1).get("port")).isEqualTo("port");
+        assertThat(unqualifiedTypes.getRows().get(1).get("port")).isEqualTo("NamedPortPackage");
+        assertThat(unqualifiedTypes.getRows().get(1).get("description")).isEqualTo("Some Port Description");
 
-        TestResult primaryTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Primary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port ORDER BY toLower(t.name)");
+        TestResult primaryTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Primary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port, p.description AS description ORDER BY toLower(t.name)");
         assertThat(primaryTypes.getRows().size()).isEqualTo(2);
         assertThat(primaryTypes.getRows().get(0).get("type")).isEqualTo("package-info");
         assertThat(primaryTypes.getRows().get(0).get("port")).isEqualTo("primaryport");
+        assertThat(primaryTypes.getRows().get(0).get("description")).isEqualTo(null);
         assertThat(primaryTypes.getRows().get(1).get("type")).isEqualTo("PrimaryPortPackage");
         assertThat(primaryTypes.getRows().get(1).get("port")).isEqualTo("primaryport");
+        assertThat(primaryTypes.getRows().get(1).get("description")).isEqualTo(null);
 
-        TestResult secondaryTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Secondary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port ORDER BY toLower(t.name)");
+        TestResult secondaryTypes = query("MATCH (p:JMolecules:Architecture:Hexagonal:Port{type: 'Secondary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, p.name AS port, p.description AS description ORDER BY toLower(t.name)");
         assertThat(secondaryTypes.getRows().size()).isEqualTo(2);
         assertThat(secondaryTypes.getRows().get(0).get("type")).isEqualTo("package-info");
         assertThat(secondaryTypes.getRows().get(0).get("port")).isEqualTo("secondaryport");
+        assertThat(secondaryTypes.getRows().get(0).get("description")).isEqualTo(null);
         assertThat(secondaryTypes.getRows().get(1).get("type")).isEqualTo("SecondaryPortPackage");
         assertThat(secondaryTypes.getRows().get(1).get("port")).isEqualTo("secondaryport");
+        assertThat(secondaryTypes.getRows().get(1).get("description")).isEqualTo(null);
         store.commitTransaction();
     }
 
@@ -100,20 +125,35 @@ public class HexagonalIT extends AbstractJMoleculesPluginIT {
         scanClassesAndPackages(HexagonalApp.class);
         assertThat(applyConcept("jmolecules-hexagonal:AdapterType").getStatus()).isEqualTo(Result.Status.SUCCESS);
         store.beginTransaction();
-        TestResult unqualifiedTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Unqualified'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter ORDER BY toLower(t.name)");
-        assertThat(unqualifiedTypes.getRows().size()).isEqualTo(1);
+        TestResult unqualifiedTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Unqualified'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter, a.description AS description ORDER BY toLower(t.name)");
+        assertThat(unqualifiedTypes.getRows().size()).isEqualTo(2);
         assertThat(unqualifiedTypes.getRows().get(0).get("type")).isEqualTo("AdapterType");
         assertThat(unqualifiedTypes.getRows().get(0).get("adapter")).isEqualTo("AdapterType");
+        assertThat(unqualifiedTypes.getRows().get(0).get("description")).isEqualTo(null);
+        assertThat(unqualifiedTypes.getRows().get(1).get("type")).isEqualTo("NamedAdapter");
+        assertThat(unqualifiedTypes.getRows().get(1).get("adapter")).isEqualTo("CustomNamedAdapter");
+        assertThat(unqualifiedTypes.getRows().get(1).get("description")).isEqualTo(null);
 
-        TestResult primaryTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Primary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter ORDER BY toLower(t.name)");
-        assertThat(primaryTypes.getRows().size()).isEqualTo(1);
-        assertThat(primaryTypes.getRows().get(0).get("type")).isEqualTo("PrimaryAdapterType");
-        assertThat(primaryTypes.getRows().get(0).get("adapter")).isEqualTo("PrimaryAdapterType");
+        TestResult primaryTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Primary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter, a.description AS description ORDER BY toLower(t.name)");
+        assertThat(primaryTypes.getRows().size()).isEqualTo(3);
+        assertThat(primaryTypes.getRows().get(0).get("type")).isEqualTo("NamedPrimaryAdapter");
+        assertThat(primaryTypes.getRows().get(0).get("adapter")).isEqualTo("CustomNamedPrimaryAdapter");
+        assertThat(primaryTypes.getRows().get(0).get("description")).isEqualTo(null);
+        assertThat(primaryTypes.getRows().get(1).get("type")).isEqualTo("NamedPrimaryAdapterDTO");
+        assertThat(primaryTypes.getRows().get(1).get("adapter")).isEqualTo("CustomNamedPrimaryAdapter");
+        assertThat(primaryTypes.getRows().get(1).get("description")).isEqualTo(null);
+        assertThat(primaryTypes.getRows().get(2).get("type")).isEqualTo("PrimaryAdapterType");
+        assertThat(primaryTypes.getRows().get(2).get("adapter")).isEqualTo("PrimaryAdapterType");
+        assertThat(primaryTypes.getRows().get(2).get("description")).isEqualTo(null);
 
-        TestResult secondaryTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Secondary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter ORDER BY toLower(t.name)");
-        assertThat(secondaryTypes.getRows().size()).isEqualTo(1);
-        assertThat(secondaryTypes.getRows().get(0).get("type")).isEqualTo("SecondaryAdapterType");
-        assertThat(secondaryTypes.getRows().get(0).get("adapter")).isEqualTo("SecondaryAdapterType");
+        TestResult secondaryTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Secondary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter, a.description AS description ORDER BY toLower(t.name)");
+        assertThat(secondaryTypes.getRows().size()).isEqualTo(2);
+        assertThat(secondaryTypes.getRows().get(0).get("type")).isEqualTo("NamedSecondaryAdapter");
+        assertThat(secondaryTypes.getRows().get(0).get("adapter")).isEqualTo("CustomNamedSecondaryAdapter");
+        assertThat(secondaryTypes.getRows().get(0).get("description")).isEqualTo("Some Secondary Adapter Description");
+        assertThat(secondaryTypes.getRows().get(1).get("type")).isEqualTo("SecondaryAdapterType");
+        assertThat(secondaryTypes.getRows().get(1).get("adapter")).isEqualTo("SecondaryAdapterType");
+        assertThat(secondaryTypes.getRows().get(1).get("description")).isEqualTo(null);
         store.commitTransaction();
     }
 
@@ -122,26 +162,32 @@ public class HexagonalIT extends AbstractJMoleculesPluginIT {
         scanClassesAndPackages(HexagonalApp.class);
         assertThat(applyConcept("jmolecules-hexagonal:AdapterPackage").getStatus()).isEqualTo(Result.Status.SUCCESS);
         store.beginTransaction();
-        TestResult unqualifiedTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Unqualified'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter ORDER BY toLower(t.name)");
+        TestResult unqualifiedTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Unqualified'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter, a.description AS description ORDER BY toLower(t.name)");
         assertThat(unqualifiedTypes.getRows().size()).isEqualTo(2);
         assertThat(unqualifiedTypes.getRows().get(0).get("type")).isEqualTo("AdapterPackage");
         assertThat(unqualifiedTypes.getRows().get(0).get("adapter")).isEqualTo("adapter");
+        assertThat(unqualifiedTypes.getRows().get(0).get("description")).isEqualTo(null);
         assertThat(unqualifiedTypes.getRows().get(1).get("type")).isEqualTo("package-info");
         assertThat(unqualifiedTypes.getRows().get(1).get("adapter")).isEqualTo("adapter");
+        assertThat(unqualifiedTypes.getRows().get(1).get("description")).isEqualTo(null);
 
-        TestResult primaryTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Primary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter ORDER BY toLower(t.name)");
+        TestResult primaryTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Primary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter, a.description AS description ORDER BY toLower(t.name)");
         assertThat(primaryTypes.getRows().size()).isEqualTo(2);
         assertThat(primaryTypes.getRows().get(0).get("type")).isEqualTo("package-info");
-        assertThat(primaryTypes.getRows().get(0).get("adapter")).isEqualTo("primaryadapter");
+        assertThat(primaryTypes.getRows().get(0).get("adapter")).isEqualTo("NamedPrimaryAdapterPackage");
+        assertThat(primaryTypes.getRows().get(0).get("description")).isEqualTo("Some Primary Adapter Description");
         assertThat(primaryTypes.getRows().get(1).get("type")).isEqualTo("PrimaryAdapterPackage");
-        assertThat(primaryTypes.getRows().get(1).get("adapter")).isEqualTo("primaryadapter");
+        assertThat(primaryTypes.getRows().get(1).get("adapter")).isEqualTo("NamedPrimaryAdapterPackage");
+        assertThat(primaryTypes.getRows().get(1).get("description")).isEqualTo("Some Primary Adapter Description");
 
-        TestResult secondaryTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Secondary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter ORDER BY toLower(t.name)");
+        TestResult secondaryTypes = query("MATCH (a:JMolecules:Architecture:Hexagonal:Adapter{type: 'Secondary'})-[:IMPLEMENTED_BY]->(t:Type) RETURN t.name AS type, a.name AS adapter, a.description AS description ORDER BY toLower(t.name)");
         assertThat(secondaryTypes.getRows().size()).isEqualTo(2);
         assertThat(secondaryTypes.getRows().get(0).get("type")).isEqualTo("package-info");
         assertThat(secondaryTypes.getRows().get(0).get("adapter")).isEqualTo("secondaryadapter");
+        assertThat(secondaryTypes.getRows().get(0).get("description")).isEqualTo(null);
         assertThat(secondaryTypes.getRows().get(1).get("type")).isEqualTo("SecondaryAdapterPackage");
         assertThat(secondaryTypes.getRows().get(1).get("adapter")).isEqualTo("secondaryadapter");
+        assertThat(secondaryTypes.getRows().get(1).get("description")).isEqualTo(null);
         store.commitTransaction();
     }
 
