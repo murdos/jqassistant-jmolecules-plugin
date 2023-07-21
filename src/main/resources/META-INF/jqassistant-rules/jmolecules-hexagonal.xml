@@ -100,13 +100,19 @@
             OPTIONAL MATCH
               (a)-[:HAS]->(name:Value{name: "name"})
             WITH
-              type, coalesce(name.value, type.name) AS name, replace(annotation.name, "Port", "") AS portType
+              type, a, coalesce(name.value, type.name) AS name, replace(annotation.name, "Port", "") AS portType
             WITH
-              type, name, CASE WHEN portType = "" THEN "Unqualified" ELSE portType END AS portType
+              type, a, name, CASE WHEN portType = "" THEN "Unqualified" ELSE portType END AS portType
             MERGE
               (port:JMolecules:Architecture:Hexagonal:Port{name: name, type: portType})
             MERGE
               (port)-[:IMPLEMENTED_BY]->(type)
+            WITH
+              a, port, type
+            OPTIONAL MATCH
+              (a)-[:HAS]->(description:Value{name: "description"})
+            SET
+              port.description = coalesce(port.description, description.value)
             RETURN
               type AS Port
         ]]></cypher>
@@ -132,13 +138,19 @@
             OPTIONAL MATCH
               (a)-[:HAS]->(name:Value{name: "name"})
             WITH
-              type, coalesce(name.value, p.name) AS name, replace(annotation.name, "Port", "") AS portType
+              type, a, coalesce(name.value, p.name) AS name, replace(annotation.name, "Port", "") AS portType
             WITH
-              type, name, CASE WHEN portType = "" THEN "Unqualified" ELSE portType END AS portType
+              type, a, name, CASE WHEN portType = "" THEN "Unqualified" ELSE portType END AS portType
             MERGE
               (port:JMolecules:Architecture:Hexagonal:Port{name: name, type: portType})
             MERGE
               (port)-[:IMPLEMENTED_BY]->(type)
+            WITH
+              a, port, type
+            OPTIONAL MATCH
+              (a)-[:HAS]->(description:Value{name: "description"})
+            SET
+              port.description = coalesce(port.description, description.value)
             RETURN
               type AS Port
         ]]></cypher>
@@ -175,13 +187,19 @@
             OPTIONAL MATCH
               (a)-[:HAS]->(name:Value{name: "name"})
             WITH
-              type, coalesce(name.value, type.name) AS name, replace(annotation.name, "Adapter", "") AS adapterType
+              type, a, coalesce(name.value, type.name) AS name, replace(annotation.name, "Adapter", "") AS adapterType
             WITH
-              type, name, CASE WHEN adapterType = "" THEN "Unqualified" ELSE adapterType END AS adapterType
+              type, a, name, CASE WHEN adapterType = "" THEN "Unqualified" ELSE adapterType END AS adapterType
             MERGE
               (adapter:JMolecules:Architecture:Hexagonal:Adapter{name: name, type: adapterType})
             MERGE
               (adapter)-[:IMPLEMENTED_BY]->(type)
+            WITH
+              a, adapter, type
+            OPTIONAL MATCH
+              (a)-[:HAS]->(description:Value{name: "description"})
+            SET
+              adapter.description = coalesce(adapter.description, description.value)
             RETURN
               type AS Adapter
         ]]></cypher>
@@ -207,13 +225,19 @@
             OPTIONAL MATCH
               (a)-[:HAS]->(name:Value{name: "name"})
             WITH
-              type, coalesce(name.value, p.name) AS name, replace(annotation.name, "Adapter", "") AS adapterType
+              type, a, coalesce(name.value, p.name) AS name, replace(annotation.name, "Adapter", "") AS adapterType
             WITH
-              type, name, CASE WHEN adapterType = "" THEN "Unqualified" ELSE adapterType END AS adapterType
+              type, a, name, CASE WHEN adapterType = "" THEN "Unqualified" ELSE adapterType END AS adapterType
             MERGE
               (adapter:JMolecules:Architecture:Hexagonal:Adapter{name: name, type: adapterType})
             MERGE
               (adapter)-[:IMPLEMENTED_BY]->(type)
+            WITH
+              a, adapter, type
+            OPTIONAL MATCH
+              (a)-[:HAS]->(description:Value{name: "description"})
+            SET
+              adapter.description = coalesce(adapter.description, description.value)
             RETURN
               type AS Adapter
         ]]></cypher>
