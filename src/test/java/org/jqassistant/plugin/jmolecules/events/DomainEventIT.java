@@ -43,4 +43,26 @@ public class DomainEventIT extends AbstractJMoleculesPluginIT {
         store.commitTransaction();
     }
 
+    @Test
+    public void externalizedType() throws RuleException {
+        scanClassesAndPackages(DomainEvent1.class);
+        assertEquals(Result.Status.SUCCESS, applyConcept("jmolecules-event:ExternalizedType").getStatus());
+        store.beginTransaction();
+        List<Map<String, Object>> rows = query("MATCH (t:JMolecules:Event:Externalized:DomainEvent) RETURN t.name AS name ORDER BY t.fqn").getRows();
+        assertThat(rows.size()).isEqualTo(1);
+        assertThat(rows.get(0).get("name")).isEqualTo("DomainEvent1");
+        store.commitTransaction();
+    }
+
+    @Test
+    public void externalizedExtend() throws RuleException {
+        scanClassesAndPackages(DomainEvent2.class);
+        assertEquals(Result.Status.SUCCESS, applyConcept("jmolecules-event:ExternalizedExtend").getStatus());
+        store.beginTransaction();
+        List<TypeDescriptor> types = query("MATCH (t:JMolecules:Event:Externalized:DomainEvent) RETURN t").getColumn("t");
+        assertThat(types.size()).isEqualTo(1);
+        assertThat(types.get(0).getName()).isEqualTo("DomainEvent2");
+        store.commitTransaction();
+    }
+
 }

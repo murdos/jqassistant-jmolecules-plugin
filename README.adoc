@@ -349,6 +349,11 @@ Constraint:
 *** Default values for `eventName`: Simple Type Name of the annotated class
 *** Default values for `eventNamespace`: Fully-qualified name of the package containing the annotated class
 
+* Externalized
+** Supported as Type-Annotation and Interface
+** Applied Labels: `:Externalized`
+*** Note: This is applied to identified `:DomainEvent`s only
+
 * DomainEventHandler
 ** Supported as Method-Annotation
 ** Applied Labels: `JMolecules:Event:DomainEventHandler`
