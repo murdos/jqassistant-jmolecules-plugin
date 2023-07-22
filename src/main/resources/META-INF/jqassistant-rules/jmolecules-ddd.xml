@@ -320,6 +320,8 @@
               (boundedContext1:JMolecules:DDD:BoundedContext)-[:CONTAINS]->(contextType1:Type),
               (boundedContext2:JMolecules:DDD:BoundedContext)-[:CONTAINS]->(contextType2:Type),
               (contextType1)-[d:DEPENDS_ON]->(contextType2)
+            WHERE
+               boundedContext1 <> boundedContext2
             WITH
               boundedContext1, boundedContext2, sum(d.weight) AS totalWeight
             MERGE
@@ -382,6 +384,8 @@
               (m1:JMolecules:DDD:Module)-[:CONTAINS]->(mType1:Type),
               (m2:JMolecules:DDD:Module)-[:CONTAINS]->(mType2:Type),
               (mType1)-[d:DEPENDS_ON]->(mType2)
+            WHERE
+               m1 <> m2
             WITH
               m1, m2, sum(d.weight) AS totalWeight
             MERGE

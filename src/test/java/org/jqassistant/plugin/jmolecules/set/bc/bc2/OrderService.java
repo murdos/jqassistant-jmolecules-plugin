@@ -8,6 +8,8 @@ import java.util.List;
 @Service
 public class OrderService {
 
+    private OrderRepository orderRepository;
+
     public void createOrderForProducts(List<Product> products) {
 
     }
