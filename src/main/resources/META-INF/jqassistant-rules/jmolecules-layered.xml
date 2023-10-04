@@ -82,6 +82,8 @@
               (layer1:JMolecules:Architecture:Layered:Layer)-[:CONTAINS]->(layerType1:Type),
               (layer2:JMolecules:Architecture:Layered:Layer)-[:CONTAINS]->(layerType2:Type),
               (layerType1)-[d:DEPENDS_ON]->(layerType2)
+            WHERE
+              layer1 <> layer2
             WITH
               layer1, layer2, sum(d.weight) AS totalWeight
             MERGE

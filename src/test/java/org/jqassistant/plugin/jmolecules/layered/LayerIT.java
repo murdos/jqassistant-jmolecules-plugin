@@ -100,10 +100,11 @@ public class LayerIT extends AbstractJMoleculesPluginIT {
 
     private void verifyDomainLayerPackage() {
         List<TypeDescriptor> types = query("MATCH (:JMolecules:Architecture:Layered:Layer{name: 'Domain'})-[:CONTAINS]->(t:Type:Java) RETURN t ORDER BY t.fqn").getColumn("t");
-        assertThat(types.size()).isEqualTo(3);
+        assertThat(types.size()).isEqualTo(4);
         assertThat(types.get(0).getName()).isEqualTo("Domain1");
         assertThat(types.get(1).getName()).isEqualTo("Domain2");
-        assertThat(types.get(2).getName()).isEqualTo("package-info");
+        assertThat(types.get(2).getName()).isEqualTo("Domain3");
+        assertThat(types.get(3).getName()).isEqualTo("package-info");
     }
 
     private void verifyInfrastructureLayerPackage() {
