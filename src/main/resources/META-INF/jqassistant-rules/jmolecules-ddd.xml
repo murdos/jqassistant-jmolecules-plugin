@@ -131,7 +131,7 @@
               (t:Type)-[:DECLARES]->(m:Member),
               (m)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(:Type{fqn: "org.jmolecules.ddd.annotation.Identity"})
             WHERE
-              NOT exists(m.synthetic) OR m.synthetic = false
+              m.synthetic IS NULL OR m.synthetic = false
             MERGE
               (t)-[:HAS_IDENTITY]->(m)
             SET
@@ -152,7 +152,7 @@
             WHERE
               j.fqn IN ["org.jmolecules.ddd.types.AggregateRoot", "org.jmolecules.ddd.types.Entity"] AND
               m.signature ENDS WITH "getId()" AND
-              (NOT exists(m.synthetic) OR m.synthetic = false)
+              (m.synthetic IS NULL OR m.synthetic = false)
             WITH
               t, m
             MERGE

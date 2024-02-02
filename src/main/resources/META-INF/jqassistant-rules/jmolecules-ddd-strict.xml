@@ -30,14 +30,14 @@
           MATCH
             (valueObject:JMolecules:DDD:ValueObject)-[:DECLARES]->(f:Field)
           WHERE
-            NOT exists(f.final) OR f.final = false
+            f.final IS NULL OR f.final = false
           RETURN
             valueObject AS ValueObject, f AS MutableField
           UNION
           MATCH
             (valueObject:JMolecules:DDD:ValueObject)-[:EXTENDS|IMPLEMENTS*]->(c)-[:DECLARES]->(f:Field)
           WHERE
-            NOT exists(f.final) OR f.final = false
+            f.final IS NULL OR f.final = false
           RETURN
             valueObject AS ValueObject, f AS MutableField
         ]]></cypher>
@@ -51,7 +51,7 @@
           MATCH
             (identifiable:JMolecules:DDD:Identifiable)-[:HAS_IDENTITY]->(f:Identity:Field)
           WHERE
-            NOT exists(f.final) OR f.final = false
+            f.final IS NULL OR f.final = false
           RETURN
             identifiable AS Identifiable, f AS MutableIdentity
         ]]></cypher>
@@ -70,7 +70,7 @@
             (t1)-[:DEPENDS_ON]->(t2)
           WHERE
             dependentBC <> dependencyBC AND
-            NOT EXISTS((:BoundedContext{name: dependentBC.name})-[:DEFINES_DEPENDENCY]->(:BoundedContext{name: dependencyBC.name}))
+            NOT (:BoundedContext{name: dependentBC.name})-[:DEFINES_DEPENDENCY]->(:BoundedContext{name: dependencyBC.name})
           RETURN
             dependentBC AS SourceBoundedContext, dependencyBC AS TargetBoundedContext, t1 AS SourceType, t2 AS TargetType
           ORDER BY
